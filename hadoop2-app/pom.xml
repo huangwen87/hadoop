@@ -1,0 +1,117 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>hadoop2-app</groupId>
+  <artifactId>hadoop2-app</artifactId>
+  <version>0.0.1-SNAPSHOT</version>
+  <packaging>jar</packaging>
+
+  <name>hadoop2-app</name>
+  <url>http://maven.apache.org</url>
+
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+  </properties>
+  
+  <repositories>  
+	  <repository>  
+	    <id>central</id>  
+	    <name>Maven Repository Switchboard</name>  
+	    <layout>default</layout>  
+	    <url>http://repo1.maven.org/maven2</url>  
+	    <snapshots>  
+	      <enabled>false</enabled>  
+	    </snapshots>  
+	  </repository>
+   </repositories>
+
+  <dependencies>
+		<dependency>
+		    <groupId>commons-dbcp</groupId>
+		    <artifactId>commons-dbcp</artifactId>
+		    <version>1.2.2</version>
+		</dependency>
+	    <dependency>
+			<groupId>mysql</groupId>
+			<artifactId>mysql-connector-java</artifactId>
+			<version>5.1.25</version>
+		</dependency>
+
+  </dependencies>
+  
+  
+  <build>
+        <finalName>hadoop2-app</finalName>
+        <sourceDirectory>src/main/java</sourceDirectory>   <!-- 一定要写，很重要 -->
+        <plugins>
+             <plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-clean-plugin</artifactId>
+				<configuration>
+					<verbose>true</verbose>
+					<filesets>
+						<fileset>
+							<directory>>${project.build.directory}/</directory>
+						</fileset>
+					</filesets>
+				</configuration>
+			</plugin>
+			<!-- 设置maven使用的jdk版本，防止每次update都自动改为jdk1.5 -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<configuration>
+					<source>1.6</source>
+					<target>1.6</target>
+					<encoding>UTF-8</encoding>
+				</configuration>
+			</plugin>
+			<!-- 打jar包时需要把配置文件给排除在外 -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
+				<executions>
+					<execution>
+						<phase>package</phase>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+						<configuration>
+                            <outputDirectory>${project.build.directory}/lib</outputDirectory>
+							<excludes>
+                                <exclude>core-site.xml</exclude>
+								<exclude>hdfs-site.xml</exclude>
+								<exclude>mapred-site.xml</exclude>
+								<exclude>yarn-site.xml</exclude>
+							</excludes>
+						</configuration>
+					</execution>
+				</executions>
+			 </plugin>
+			 <!-- 依赖的jar包自动拷入到lib目录下, 给linux情况使用 -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-dependency-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>copy-dependencies</id>
+						<phase>package</phase>
+						<goals>
+							<goal>copy-dependencies</goal>
+						</goals>
+						<configuration>
+							<outputDirectory>${project.build.directory}/lib</outputDirectory>
+							<overWriteReleases>false</overWriteReleases>
+							<overWriteSnapshots>false</overWriteSnapshots>
+							<overWriteIfNewer>true</overWriteIfNewer>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+        </plugins>
+  </build>
+  
+  
+  
+</project>
